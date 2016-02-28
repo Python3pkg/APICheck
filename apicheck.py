@@ -26,9 +26,9 @@
 """ APICheck is a web API testing tool for JSON based APIs.
 
 The tool runs a set of tests defined in a JSON configuration file and
-checks the HTTP response against expected JSON values or types. 
+checks the HTTP response against expected JSON values or types.
 
-For more information, see the project's Github page: 
+For more information, see the project's Github page:
 
 Basic test file contents:
 
@@ -61,7 +61,7 @@ Basic test file contents:
 	Notes:
 	- name, url and method are required
 	- expected_response_values and expected_response_types dictionaries are
-	  both optional, although one must be defined for any testing occur
+		both optional, although one must be defined for any testing occur
 	- expected types can be 'string', 'int' or 'float'
 
 Usage:
@@ -69,13 +69,11 @@ Usage:
 	usage: apicheck [-h] [-f FORMAT] [test_file_name]
 
 	positional arguments:
-	  test_file_name        name of file containing JSON array of tests
+		test_file_name        name of file containing JSON array of tests
 
 	optional arguments:
-	  -h, --help            show this help message and exit
-	  -f FORMAT, --format FORMAT
-	                        output format - must be either json or text
-
+		-h, --help            		show this help message and exit
+		-f FORMAT, --format FORMAT 	output format - must be either json or text
 
 """
 
@@ -100,8 +98,8 @@ class TestFailedException(Exception):
 	This exception is raised when any test reaches a failure point.
 
 	"""
-	def __init__(self,*args,**kwargs):
-		Exception.__init__(self,*args,**kwargs)
+	def __init__(self, *args, **kwargs):
+		Exception.__init__(self, *args, **kwargs)
 
 
 class APICheck:
@@ -114,12 +112,12 @@ class APICheck:
 
 	"""
 
-	def __init__(self,fname):
+	def __init__(self, fname):
 		"""Initialize the APICheck object.
 
 		Loads tests from the given filename and initializes all
 		statistics to 0.
-	
+
 		:param fname: path to test file
 
 		"""
@@ -128,15 +126,15 @@ class APICheck:
 		self.passed = 0
 		self.failed = 0
 		self.total_elapsed_time = 0
-		
-	def load_tests_file(self,fname):
+
+	def load_tests_file(self, fname):
 		"""Load tests from given file into tests instance variable
 
 		:param fname: path to test file
 
 		"""
 
-		with open(fname) as data_file:    
+		with open(fname) as data_file:
 			self.tests = json.load(data_file)
 
 	def run_all_tests(self):
@@ -150,14 +148,14 @@ class APICheck:
 		# for the most recently run set of tests
 		self.passed = 0
 		self.failed = 0
-	
+
 		# Run and time each test
-		for index,test in enumerate(self.tests):
+		for index, test in enumerate(self.tests):
 
 			# Time the test until finished or until an exception occurs.
 			test_start_time = time.time()
 
-			try: 
+			try:
 
 				self.__run_test(test)
 
@@ -166,8 +164,8 @@ class APICheck:
 				self.results.append(
 					{
 						"name": test["name"],
-						"status":"PASSED",
-						"elapsed_time":test_elapsed_time
+						"status": "PASSED",
+						"elapsed_time": test_elapsed_time
 					}
 				)
 
@@ -176,25 +174,25 @@ class APICheck:
 			except TestFailedException as e:
 
 				# The test stops at first error it encounters.
-				# User receives feedback about the first error only. 
+				# User receives feedback about the first error only.
 				test_elapsed_time = time.time() - test_start_time
 
 				self.results.append(
 					{
 						"name": test["name"],
-						"status":"FAILED",
-						"elapsed_time":test_elapsed_time,
-						"error_msg":str(e)
+						"status": "FAILED",
+						"elapsed_time": test_elapsed_time,
+						"error_msg": str(e)
 					}
 				)
 
 				self.failed += 1
 
-		# Instance variable total_elapsed_time contains the 
+		# Instance variable total_elapsed_time contains the
 		# total runtime of the most recently run set of tests
 		self.total_elapsed_time = time.time() - total_start_time
 
-	def write_results_to_file(self,format,fname):
+	def write_results_to_file(self, format, fname):
 		"""Writes results to given filename.
 
 		:param format: output format - must be either 'json' or 'text'
@@ -203,10 +201,9 @@ class APICheck:
 		"""
 
 		with open(fname, 'w') as outfile:
-			self.__output_results(format,outfile)
-			
+			self.__output_results(format, outfile)
 
-	def print_results(self,format):
+	def print_results(self, format):
 		"""Prints results to stdout.
 
 		:param format: output format - must be either 'json' or 'text'
@@ -215,8 +212,8 @@ class APICheck:
 
 		self.__output_results(format)
 
-	def __run_test(self,test):
-		"""Run an individual test. 
+	def __run_test(self, test):
+		"""Run an individual test.
 
 		:param test: a map represnting a test. Must have keys 'name','url', and 'method'
 
@@ -224,16 +221,16 @@ class APICheck:
 
 		try:
 
-			# Assigning vars checks for keys, ensuring that the test 
+			# Assigning vars checks for keys, ensuring that the test
 			# is correctly formed
 			name = test["name"]
 			url = test["url"]
 			method = test["method"]
 
-			if method.upper()=="GET":
+			if method.upper() == "GET":
 				r = requests.get(url)
 
-			elif method.upper()=="POST":
+			elif method.upper() == "POST":
 
 				if "payload" in test:
 					r = requests.post(url, json=test["payload"])
@@ -248,12 +245,12 @@ class APICheck:
 
 		except KeyError as e:
 			msg = "Malformed test. Must provide '%s' in tests file." \
-				  % str(e.args[0])
+				% str(e.args[0])
 			raise TestFailedException(msg)
 
 		except ValueError as e:
 			raise TestFailedException("Could not decode JSON from response.")
-		
+
 		try:
 
 			# Run all checks for expected exact JSON response values
@@ -263,10 +260,10 @@ class APICheck:
 
 					exp_val = test["expected_response_values"][key]
 
-					if  exp_val != resp[key]:
+					if exp_val != resp[key]:
 
 						msg = "Expected value '%s' at key '%s' but got '%s'." \
-								  % (str(exp_val),str(key),str(resp[key]))
+							% (str(exp_val), str(key), str(resp[key]))
 
 						raise TestFailedException(msg)
 
@@ -279,60 +276,60 @@ class APICheck:
 
 					if exp_type == "string":
 
-						if not isinstance(resp[key],str):
+						if not isinstance(resp[key], str):
 
 							raise TestFailedException(
-								self.get_type_error_message(key,resp[key],exp_type))
+								self.get_type_error_message(key, resp[key], exp_type))
 
 					elif exp_type == "int":
 
-						if not isinstance(resp[key],int):
+						if not isinstance(resp[key], int):
 
 							raise TestFailedException(
-								self.get_type_error_message(key,resp[key],exp_type))
+								self.get_type_error_message(key, resp[key], exp_type))
 
 					elif exp_type == "float":
 
-						if not isinstance(resp[key],float):
+						if not isinstance(resp[key], float):
 
 							raise TestFailedException(
-								self.get_type_error_message(key,resp[key],exp_type))
+								self.get_type_error_message(key, resp[key], exp_type))
 
 					else:
-						raise TestFailedException("Malformed test. \
-							  Expected types allowed: 'str', 'int', 'float'")
+						raise TestFailedException(
+							"Malformed test. Expected types allowed: 'str', 'int', 'float'")
 
 		except KeyError as e:
-			raise TestFailedException("Expected key '%s' not found." 
-									  % str(e.args[0]))
+			raise TestFailedException("Expected key '%s' not found."
+										% str(e.args[0]))
 
-	def __output_results(self,format="json",outstream=sys.stdout):
-		"""Output the results to the provided output stream. 
+	def __output_results(self, format="json", outstream=sys.stdout):
+		"""Output the results to the provided output stream.
 
-        :param format: the desired output format - default 'json'
-        :param outstream: the desired output stream - default stdout
+		:param format: the desired output format - default 'json'
+		:param outstream: the desired output stream - default stdout
 
 		"""
 
 		try:
 
-			success_percent =  (self.passed/(self.passed+self.failed))*100
+			success_percent = (self.passed / (self.passed + self.failed)) * 100
 
-			if format.upper()=="JSON":
+			if format.upper() == "JSON":
 
 				res_json = {
-					"summary":{
-						"passed":self.passed,
-						"failed":self.failed,
-						"success_percentage":success_percent,
-						"total_elapsed_time":self.total_elapsed_time
+					"summary": {
+						"passed": self.passed,
+						"failed": self.failed,
+						"success_percentage": success_percent,
+						"total_elapsed_time": self.total_elapsed_time
 					},
-					"test_results":self.results
+					"test_results": self.results
 				}
 
 				json.dump(res_json, outstream, indent=4)
 
-			elif format.upper()=="TEXT":
+			elif format.upper() == "TEXT":
 
 				outstream.write("***\n")
 				outstream.write("TEST SUMMARY\n")
@@ -340,9 +337,9 @@ class APICheck:
 				outstream.write("Tests passed: %i\n" % self.passed)
 				outstream.write("Tests failed: %i\n" % self.failed)
 
-				outstream.write("Success percentage : %.2f%%\n" \
-								% round(success_percent,2))
-				outstream.write("Total elapsed time: %.3f seconds\n" 
+				outstream.write("Success percentage : %.2f%%\n"
+								% round(success_percent, 2))
+				outstream.write("Total elapsed time: %.3f seconds\n"
 								% self.total_elapsed_time)
 				outstream.write("***\n")
 
@@ -352,24 +349,24 @@ class APICheck:
 					outstream.write("\tStatus:%s\n" % res["status"])
 					outstream.write("\tElapsed time: %f\n" % res["elapsed_time"])
 
-					if(res["status"]=="FAILED"):
-						outstream.write("\tError message: %s\n" 
+					if(res["status"] == "FAILED"):
+						outstream.write("\tError message: %s\n"
 										% res["error_msg"])
 
 		except KeyError as e:
 			print(str(e))
 
-	def __get_type_error_message(self,key,val,expected_type):
-		"""Return a formatted error message for expected type errors. 
+	def __get_type_error_message(self, key, val, expected_type):
+		"""Return a formatted error message for expected type errors.
 
-        :param key: the key being checked
-        :param val: the value causing the error
-        :param expected_type: the type expected by the test
+		:param key: the key being checked
+		:param val: the value causing the error
+		:param expected_type: the type expected by the test
 
 		"""
 
 		return "Invalid type at key '%s'. Expected '%s' got '%s'." \
-				% (str(key),str(expected_type),str(type(val))) 
+				% (str(key), str(expected_type), str(type(val)))
 
 
 if __name__ == "__main__":
@@ -378,11 +375,11 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('test_file_name', type=str, nargs='?', 
-						default=TEST_FILE_NAME, 
+	parser.add_argument('test_file_name', type=str, nargs='?',
+						default=TEST_FILE_NAME,
 						help="name of file containing JSON array of tests")
-	parser.add_argument("-f", "--format", default="json", type=str, 
-					 	help="output format - must be either json or text")
+	parser.add_argument("-f", "--format", default="json", type=str,
+						help="output format - must be either json or text")
 
 	args = parser.parse_args()
 
@@ -399,7 +396,3 @@ if __name__ == "__main__":
 	except ValueError:
 		print("Cannot decode JSON from file '%s'." % args.test_file_name)
 		exit(1)
-
-
-	
-
