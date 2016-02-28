@@ -98,6 +98,7 @@ class TestFailedException(Exception):
     This exception is raised when any test reaches a failure point.
 
     """
+    
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
 
@@ -177,9 +178,14 @@ class APICheck:
                 # User receives feedback about the first error only.
                 test_elapsed_time = time.time() - test_start_time
 
+                try:
+                    test_name = test["name"]
+                except KeyError:
+                    test_name = "ERROR: NAME NOT PROVIDED"
+
                 self.results.append(
                     {
-                        "name": test["name"],
+                        "name": test_name,
                         "status": "FAILED",
                         "elapsed_time": test_elapsed_time,
                         "error_msg": str(e)
@@ -273,28 +279,14 @@ class APICheck:
                 for key in test["expected_response_types"]:
 
                     exp_type = test["expected_response_types"][key]
+                    val = resp[key]
 
                     if exp_type == "string":
-
-                        if not isinstance(resp[key], str):
-
-                            raise TestFailedException(
-                                self.get_type_error_message(key, resp[key], exp_type))
-
+                        self.__test_expected_type(key, val, str)
                     elif exp_type == "int":
-
-                        if not isinstance(resp[key], int):
-
-                            raise TestFailedException(
-                                self.get_type_error_message(key, resp[key], exp_type))
-
+                        self.__test_expected_type(key, val, int)
                     elif exp_type == "float":
-
-                        if not isinstance(resp[key], float):
-
-                            raise TestFailedException(
-                                self.get_type_error_message(key, resp[key], exp_type))
-
+                        self.__test_expected_type(key, val, float)
                     else:
                         raise TestFailedException(
                             "Malformed test. Expected types allowed: 'str', 'int', 'float'")
@@ -302,6 +294,24 @@ class APICheck:
         except KeyError as e:
             raise TestFailedException("Expected key '%s' not found."
                                       % str(e.args[0]))
+
+    def __test_expected_type(self, key, val, exp_cls):
+
+        if not isinstance(val, exp_cls):
+            raise TestFailedException(
+                self.__get_expected_type_error_message(key, val, exp_cls))
+
+    def __get_expected_type_error_message(self, key, val, expected_type):
+        """Return a formatted error message for expected type errors.
+
+        :param key: the key being checked
+        :param val: the value causing the error
+        :param expected_type: the type expected by the test
+
+        """
+
+        return "Invalid type at key '%s'. Expected '%s' got '%s'." \
+               % (str(key), str(expected_type), str(type(val)))
 
     def __output_results(self, format="json", outstream=sys.stdout):
         """Output the results to the provided output stream.
@@ -313,7 +323,9 @@ class APICheck:
 
         try:
 
-            success_percent = (self.passed / (self.passed + self.failed)) * 100
+            total_tests = self.passed + self.failed
+            total_tests = total_tests if total_tests > 0 else 1
+            success_percent = (self.passed / total_tests) * 100
 
             if format.upper() == "JSON":
 
@@ -355,18 +367,6 @@ class APICheck:
 
         except KeyError as e:
             print(str(e))
-
-    def __get_type_error_message(self, key, val, expected_type):
-        """Return a formatted error message for expected type errors.
-
-        :param key: the key being checked
-        :param val: the value causing the error
-        :param expected_type: the type expected by the test
-
-        """
-
-        return "Invalid type at key '%s'. Expected '%s' got '%s'." \
-               % (str(key), str(expected_type), str(type(val)))
 
 
 if __name__ == "__main__":
