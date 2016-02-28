@@ -2,19 +2,19 @@
 # -*- coding: utf-8 -*-
 
 # The MIT License (MIT)
-
+#
 # Copyright (c) 2016 Brad Kuykendall
-
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -87,10 +87,6 @@ import datetime
 import requests
 
 
-TEST_FILE_NAME = "tests.json"
-"""The default test file name used when no file is provided."""
-
-
 class TestFailedException(Exception):
 
     """Exception class raised when any test fails
@@ -98,7 +94,7 @@ class TestFailedException(Exception):
     This exception is raised when any test reaches a failure point.
 
     """
-    
+
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
 
@@ -295,11 +291,18 @@ class APICheck:
             raise TestFailedException("Expected key '%s' not found."
                                       % str(e.args[0]))
 
-    def __test_expected_type(self, key, val, exp_cls):
+    def __test_expected_type(self, key, val, exp_type):
+        """Check whether the type of val equals the expected type
 
-        if not isinstance(val, exp_cls):
+        :param key: the key being checked
+        :param val: the value whose type will be checked
+        :param exp_type: the type expected for val
+
+        """
+
+        if not isinstance(val, exp_type):
             raise TestFailedException(
-                self.__get_expected_type_error_message(key, val, exp_cls))
+                self.__get_expected_type_error_message(key, val, exp_type))
 
     def __get_expected_type_error_message(self, key, val, expected_type):
         """Return a formatted error message for expected type errors.
@@ -368,15 +371,11 @@ class APICheck:
         except KeyError as e:
             print(str(e))
 
-
-if __name__ == "__main__":
-    # This will only be executed when this module is run directly.
-    # It provides the command line functionality of the module.
+def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('test_file_name', type=str, nargs='?',
-                        default=TEST_FILE_NAME,
+    parser.add_argument('test_file_name', type=str,
                         help="name of file containing JSON array of tests")
     parser.add_argument("-f", "--format", default="json", type=str,
                         help="output format - must be either json or text")
@@ -396,3 +395,11 @@ if __name__ == "__main__":
     except ValueError:
         print("Cannot decode JSON from file '%s'." % args.test_file_name)
         exit(1)
+
+
+if __name__ == "__main__":
+    # This will only be executed when this module is run directly.
+    # It provides the command line functionality of the module.
+    main()
+
+    
