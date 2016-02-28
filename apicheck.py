@@ -198,7 +198,7 @@ class APICheck:
 		"""Writes results to given filename.
 
 		:param format: output format - must be either 'json' or 'text'
-        :param fname: output filename
+		:param fname: output filename
 
 		"""
 
@@ -209,7 +209,7 @@ class APICheck:
 	def print_results(self,format):
 		"""Prints results to stdout.
 
-        :param format: output format - must be either 'json' or 'text'
+		:param format: output format - must be either 'json' or 'text'
 
 		"""
 
@@ -218,7 +218,7 @@ class APICheck:
 	def __run_test(self,test):
 		"""Run an individual test. 
 
-        :param test: a map represnting a test. Must have keys 'name','url', and 'method'
+		:param test: a map represnting a test. Must have keys 'name','url', and 'method'
 
 		"""
 
@@ -283,7 +283,7 @@ class APICheck:
 
 							raise TestFailedException(
 								self.get_type_error_message(key,resp[key],
-														    exp_type))
+															exp_type))
 
 					elif exp_type == "int":
 
