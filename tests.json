@@ -1,0 +1,14 @@
+[
+	{
+		"name":"Get Test",
+		"url":"http://jsonplaceholder.typicode.com/posts/1",
+		"method":"GET",
+		"expected_response_values":{
+			"id":1
+		},
+		"expected_response_types":{
+			"title":"string",
+			"body":"string"
+		}
+	}
+]
