@@ -282,24 +282,21 @@ class APICheck:
 						if not isinstance(resp[key],str):
 
 							raise TestFailedException(
-								self.get_type_error_message(key,resp[key],
-															exp_type))
+								self.get_type_error_message(key,resp[key],exp_type))
 
 					elif exp_type == "int":
 
 						if not isinstance(resp[key],int):
 
 							raise TestFailedException(
-								self.get_type_error_message(key,resp[key],
-															exp_type))
+								self.get_type_error_message(key,resp[key],exp_type))
 
 					elif exp_type == "float":
 
 						if not isinstance(resp[key],float):
 
 							raise TestFailedException(
-								self.get_type_error_message(key,resp[key],
-															exp_type))
+								self.get_type_error_message(key,resp[key],exp_type))
 
 					else:
 						raise TestFailedException("Malformed test. \
