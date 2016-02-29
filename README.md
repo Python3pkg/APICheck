@@ -134,4 +134,51 @@ int
 float
 ```
 
+#### Full Example Test File
+
+The following is a full example of a simple test file:
+
+```
+[
+	{
+		"name":"My First Test",
+		"url":"/posts/1",
+		"method":"GET",
+		"expected_response_values":{
+			"id":1
+		}
+	},
+	{
+		"name":"My Second Test",
+		"url":"/posts/2",
+		"method":"GET",
+		"expected_response_values":{
+			"id":2,
+			"title":"qui est esse"
+		},
+		"expected_response_types":{
+			"userId":"int",
+			"body":"string"
+		}
+	},
+	{
+		"name":"My Third Test",
+		"url":"/posts/3",
+		"method":"GET",
+		"expected_response_types":{
+			"userId":"int",
+			"title":"string",
+			"body":"string"
+		}
+	}
+]
+```
+
+To run the above example, save the JSON in a file called `tests.json` and then
+run the following command:
+
+```
+apicheck http://jsonplaceholder.typicode.com tests.json
+```
+
 
