@@ -23,7 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""" APICheck is a web API testing tool for JSON based APIs.
+"""APICheck is a web API testing tool for JSON based APIs.
 
 The tool runs a set of tests defined in a JSON configuration file and
 checks the HTTP response against expected JSON values or types.
@@ -66,14 +66,14 @@ Basic test file contents:
 
 Usage:
 
-    usage: apicheck [-h] [-f FORMAT] [test_file_name]
+    usage: apicheck test_file_name [-h] [-f FORMAT] 
 
     positional arguments:
         test_file_name        name of file containing JSON array of tests
 
     optional arguments:
         -h, --help                    show this help message and exit
-        -f FORMAT, --format FORMAT     output format - must be either json or text
+        -f FORMAT, --format FORMAT    output format - must be either json or text
 
 """
 
@@ -109,7 +109,7 @@ class APICheck:
 
     """
 
-    def __init__(self, fname):
+    def __init__(self, base_url, fname):
         """Initialize the APICheck object.
 
         Loads tests from the given filename and initializes all
@@ -119,6 +119,7 @@ class APICheck:
 
         """
 
+        self.base_url = base_url
         self.load_tests_file(fname)
         self.passed = 0
         self.failed = 0
@@ -226,7 +227,7 @@ class APICheck:
             # Assigning vars checks for keys, ensuring that the test
             # is correctly formed
             name = test["name"]
-            url = test["url"]
+            url =  self.base_url + test["url"]
             method = test["method"]
 
             if method.upper() == "GET":
@@ -372,10 +373,13 @@ class APICheck:
             print(str(e))
 
 def main():
+    """Main entry point for command line utility."""
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('test_file_name', type=str,
+    parser.add_argument("api_base_url", type=str,
+                        help="base url for all tests")
+    parser.add_argument("test_file_name", type=str,
                         help="name of file containing JSON array of tests")
     parser.add_argument("-f", "--format", default="json", type=str,
                         help="output format - must be either json or text")
@@ -384,7 +388,7 @@ def main():
 
     try:
 
-        checker = APICheck(args.test_file_name)
+        checker = APICheck(args.api_base_url,args.test_file_name)
         checker.run_all_tests()
         checker.print_results(args.format)
 
