@@ -1,9 +1,10 @@
 # APICheck
 
-A web API testing tool for JSON based APIs. Written in Python.
+A tool and framework for testing JSON based web APIs. Written in Python.
 
-The tool runs a set of tests defined in a simple JSON configuration file and
-checks the HTTP response against expected JSON values or types. 
+The tool and framework can be used to run a set of tests defined in a 
+simple JSON configuration file. Each test can check the HTTP response
+from a request to a particular endpoint against expected JSON values or types. 
 
 ## Installation
 
@@ -180,5 +181,19 @@ run the following command:
 ```
 apicheck http://jsonplaceholder.typicode.com tests.json
 ```
+
+## API Documentation / Guide
+
+APICheck also provides an interface through which testing can be performed
+from within other Python modules. This part of the documentation covers all 
+the provided classes and methods.
+
+Documentation coming soon...
+
+## Future Features
+
+* More advanced checks - e.g. for arrays, nested maps, etc
+* More friendly interface for use as module within other Python applications.
+* Support for authentication headers, non-json request bodys
 
 

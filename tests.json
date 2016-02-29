@@ -1,7 +1,7 @@
 [
 	{
 		"name":"My First Test",
-		"url":"/posts/1",
+		"endpoint":"/",
 		"method":"GET",
 		"expected_response_values":{
 			"id":1
@@ -9,7 +9,7 @@
 	},
 	{
 		"name":"My Second Test",
-		"url":"/posts/2",
+		"endpoint":"/posts/2",
 		"method":"GET",
 		"expected_response_values":{
 			"id":2,
@@ -22,7 +22,7 @@
 	},
 	{
 		"name":"My Third Test",
-		"url":"/posts/3",
+		"endpoint":"/posts/3",
 		"method":"GET",
 		"expected_response_types":{
 			"userId":"int",
