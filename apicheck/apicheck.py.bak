@@ -378,7 +378,7 @@ def output_results(results, summary, format="json", outstream=sys.stdout):
                                     % res["error_msg"])
 
     except KeyError as e:
-        print((str(e)))
+        print(str(e))
 
 def main():
     """Main entry point for command line utility."""
@@ -400,15 +400,15 @@ def main():
                                 args.format)
 
     except KeyError as e:
-        print(("Required key '%s' not found. Check tests file." % str(e.args[0])))
+        print("Required key '%s' not found. Check tests file." % str(e.args[0]))
         exit(1)
 
     except FileNotFoundError:
-        print(("Cannot open file '%s'. File not found." % args.test_file_name))
+        print("Cannot open file '%s'. File not found." % args.test_file_name)
         exit(1)
 
     except ValueError:
-        print(("Cannot decode JSON from file '%s'." % args.test_file_name))
+        print("Cannot decode JSON from file '%s'." % args.test_file_name)
         exit(1)
 
 
